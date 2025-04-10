@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade 4 - Quiz com Correções</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #fce4ec, #e0f7fa);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #4a148c;
+    }
+
+    .pergunta {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .botoes button {
+      margin: 10px 10px 0 0;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #4a148c;
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .botoes button:hover {
+      background-color: #6a1b9a;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: 600;
+    }
+
+    #finalizar {
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      background-color: #43a047;
+      color: #fff;
+      border-radius: 8px;
+      display: inline-block;
+      cursor: pointer;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    #finalizar.ativo {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Atividade 4 - Responda e Aprenda 🧠💡</h2>
+    <p><p>Você superou a atividade anterior agora vamos para uma nova etapa!</p>Responda às perguntas abaixo. Você precisa de pelo menos 70% de acerto para passar para a próxima atividade.</p>
+
+    <div id="quiz"></div>
+
+    <button id="finalizar">Próxima Atividade</button>
+  </div>
+
+  <script>
+    const perguntas = [
+      { pergunta: "A CPU é o cérebro do computador.", resposta: true },
+      { pergunta: "O mouse serve apenas para desligar o computador.", resposta: false },
+      { pergunta: "O teclado é um hardware de entrada.", resposta: true },
+      { pergunta: "Wi-Fi é um tipo de vírus.", resposta: false },
+      { pergunta: "Monitor mostra as imagens e informações do computador.", resposta: true },
+      { pergunta: "Pen drive serve para ouvir músicas.", resposta: false },
+      { pergunta: "O HD é onde os arquivos são armazenados.", resposta: true },
+      { pergunta: "O sistema operacional é um hardware.", resposta: false },
+      { pergunta: "CPU significa Central de Processamento Único.", resposta: false },
+      { pergunta: "Softwares são os programas do computador.", resposta: true }
+    ];
+
+    const quiz = document.getElementById("quiz");
+    const btnFinalizar = document.getElementById("finalizar");
+    let acertos = 0;
+    let respondidas = 0;
+
+    perguntas.forEach((item, index) => {
+      const div = document.createElement("div");
+      div.classList.add("pergunta");
+      div.innerHTML = `
+        <p><strong>${index + 1}. ${item.pergunta}</strong></p>
+        <div class="botoes">
+          <button onclick="responder(${index}, true, this)">Verdadeiro</button>
+          <button onclick="responder(${index}, false, this)">Falso</button>
+        </div>
+        <p class="feedback" id="feedback${index}"></p>
+      `;
+      quiz.appendChild(div);
+    });
+
+    function responder(index, escolha, botao) {
+      const feedback = document.getElementById(`feedback${index}`);
+      if (feedback.textContent) return; // já respondida
+
+      const correta = perguntas[index].resposta;
+      if (escolha === correta) {
+        feedback.textContent = "✅ Correto!";
+        feedback.style.color = "green";
+        acertos++;
+      } else {
+        feedback.textContent = "❌ Errado! Correto seria: " + (correta ? "Verdadeiro" : "Falso");
+        feedback.style.color = "red";
+      }
+
+      respondidas++;
+
+      if (respondidas === perguntas.length) {
+        if (acertos >= 7) {
+          btnFinalizar.classList.add("ativo");
+          btnFinalizar.onclick = () => window.location.href = "atividade5.html";
+        } else {
+          alert("Você precisa de pelo menos 7 acertos para avançar. Recarregue a página para tentar novamente.");
+        }
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade 1 - Campo Minado Educativo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #c8e6c9, #e1f5fe);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #2e7d32;
+      margin-bottom: 10px;
+    }
+
+    #campoDeJogo {
+      position: relative;
+      width: 90vw;
+      max-width: 900px;
+      height: 60vh;
+      background-image: url("img/fundo.jpg"); /* Substitua pelo nome salvo */
+      background-size: cover;
+      background-position: center;
+      border: 4px solid #388e3c;
+      border-radius: 15px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .bomba {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background-image: url('https://em-content.zobj.net/source/apple/354/bomb_1f4a3.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .bomba:active {
+      transform: scale(1.2);
+    }
+
+    .explosao {
+      background-image: url('https://em-content.zobj.net/source/microsoft/379/collision_1f4a5.png');
+    }
+
+    #explicacao {
+      max-width: 900px;
+      font-size: 18px;
+      padding: 10px;
+      background-color: #ffffffc7;
+      border-radius: 10px;
+      min-height: 60px;
+      margin-bottom: 10px;
+    }
+
+    #acoesFinais {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .botaoFinal {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background-color: #2e7d32;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Atividade 1 - Campo Minado Educativo 💣</h2>
+  <p>Olá <span id="nomeAluno"></span>! Clique nas bombas para aprender informática. Leia o texto e aguarde a próxima bomba aparecer.</p>
+
+  <div id="campoDeJogo"></div>
+  <p id="explicacao"></p>
+
+  <div id="acoesFinais">
+    <p>🎉 Parabéns por concluir! Deseja prosseguir ou revisar?</p>
+    <button class="botaoFinal" onclick="window.location.href='atividade2.html'">👉 Próxima Atividade</button>
+    <button class="botaoFinal" onclick="location.reload()">🔁 Rever Atividade</button>
+  </div>
+
+  <script>
+    const aluno = JSON.parse(localStorage.getItem("aluno"));
+    document.getElementById("nomeAluno").textContent = aluno?.nome || "Aluno";
+
+    const explicacoes = [
+      "🧠 Computador é uma máquina que processa dados para gerar informações úteis.",
+      "💻 O monitor mostra o que o computador está fazendo.",
+      "⌨️ Teclado serve para digitar letras, números e comandos.",
+      "🖱️ O mouse ajuda a clicar e navegar na tela.",
+      "🧮 A CPU é como o cérebro do computador.",
+      "🗃️ O HD ou SSD guarda seus arquivos e programas.",
+      "🔌 A fonte dá energia para todas as peças do computador.",
+      "🌐 A internet conecta você com o mundo inteiro.",
+      "🛜 O Wi-Fi permite usar a internet sem fios.",
+      "🖨️ A impressora transforma documentos em papel.",
+      "🧱 O gabinete guarda todas as partes do computador.",
+      "🧩 Softwares são os programas que usamos no computador.",
+      "🦠 Antivírus protege contra programas perigosos.",
+      "🧑‍💻 O sistema operacional controla tudo (Windows, Linux...).",
+      "📁 As pastas organizam seus arquivos.",
+      "💾 Pen drives guardam e transportam arquivos.",
+      "🎧 Caixas de som e fones emitem o som do computador.",
+      "📷 Webcam tira fotos e faz vídeo chamadas.",
+      "⚙️ O painel de controle ajuda a configurar o computador.",
+      "🚨 Desligue corretamente o computador para não perder dados."
+    ];
+
+    const campo = document.getElementById("campoDeJogo");
+    const texto = document.getElementById("explicacao");
+    const acoesFinais = document.getElementById("acoesFinais");
+
+    let cliques = 0;
+
+    function criarBomba() {
+      const bomba = document.createElement("button");
+      bomba.classList.add("bomba");
+
+      const campoRect = campo.getBoundingClientRect();
+      const posX = Math.random() * (campo.clientWidth - 60);
+      const posY = Math.random() * (campo.clientHeight - 60);
+
+      bomba.style.left = `${posX}px`;
+      bomba.style.top = `${posY}px`;
+
+      bomba.addEventListener("click", () => {
+        bomba.classList.add("explosao");
+        bomba.disabled = true;
+        texto.textContent = explicacoes[cliques];
+
+        cliques++;
+        if (cliques < explicacoes.length) {
+          setTimeout(() => {
+            bomba.remove();
+            criarBomba();
+          }, 2500);
+        } else {
+          setTimeout(() => {
+            bomba.remove();
+            texto.textContent = "🎉 Você completou todos os passos!";
+            acoesFinais.style.display = "block";
+          }, 2500);
+        }
+      });
+
+      campo.appendChild(bomba);
+    }
+
+    // Iniciar com a primeira bomba
+    window.onload = () => {
+      criarBomba();
+    };
+  </script>
+</body>
+</html>

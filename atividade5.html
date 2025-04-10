@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade 5 - Missão dos Componentes</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f8bbd0, #e1f5fe, #c8e6c9);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h2 {
+      color: #6a1b9a;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .contexto {
+      background-color: #fffde7;
+      padding: 15px;
+      border-left: 5px solid #ffca28;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+    .area-principal {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .perguntas, .opcoes {
+      flex: 1;
+      min-width: 300px;
+    }
+    .grupo {
+      margin-bottom: 20px;
+    }
+    .grupo strong {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .drop-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+      min-height: 60px;
+      background-color: #f1f8e9;
+      border: 2px dashed #8bc34a;
+      border-radius: 8px;
+    }
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .opcao {
+      padding: 8px 12px;
+      background: linear-gradient(to right, #7b1fa2, #512da8);
+      color: white;
+      border-radius: 6px;
+      cursor: grab;
+      width: fit-content;
+    }
+    #resultado {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: 600;
+      background-color: #fff3e0;
+      border-left: 4px solid #ffa726;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #btnVerificar, #btnReiniciar, #btnProxima {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #btnVerificar {
+      background: linear-gradient(to right, #43a047, #2e7d32);
+    }
+    #btnReiniciar {
+      display: none;
+      background: linear-gradient(to right, #ef6c00, #f57c00);
+    }
+    #btnProxima {
+      display: none;
+      background: linear-gradient(to right, #1976d2, #0d47a1);
+    }
+    .correta {
+      background-color: #66bb6a !important;
+    }
+    .errada {
+      background-color: #ef5350 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Atividade 5 - Missão dos Componentes 🚀</h2>
+    
+    <div class="contexto">
+      <p>Olá <span id="nomeAluno"></span>! Que bom que chegou até aqui...</p>
+      <p>Nessa atividade você foi escolhido para montar um computador para o projeto TamoJunto, Só que os componentes estão embaralhados e ele não sabe qual é a função de cada um. Sua missão é ajudar a organizar os equipamentos, colocando cada nome no local correto conforme sua função. 💻🖱️⌨️</p>
+      <p> Arraste os nomes dos componentes até a descrição correspondente.</p>
+    </div>
+    
+
+    <div class="area-principal">
+      <div class="perguntas">
+        <div class="grupo" data-resposta="Teclado">
+          <strong>É usado para escrever comandos e textos no computador.</strong>
+          <div class="drop-area"></div>
+        </div>
+        <div class="grupo" data-resposta="Monitor">
+          <strong>Exibe tudo o que está acontecendo no computador.</strong>
+          <div class="drop-area"></div>
+        </div>
+        
+        <div class="grupo" data-resposta="Impressora">
+          <strong>Serve para passar para o papel aquilo que está na tela.</strong>
+          <div class="drop-area"></div>
+        </div>
+        <div class="grupo" data-resposta="Gabinete">
+          <strong>É a caixa que guarda todas as partes importantes do computador.</strong>
+          <div class="drop-area"></div>
+        </div>
+        <div class="grupo" data-resposta="Placa-mãe">
+          <strong>É a principal placa do computador, onde todos os outros componentes se conectam.</strong>
+          <div class="drop-area"></div>
+        </div>
+      </div>
+
+      <div class="opcoes">
+        <div class="opcao" draggable="true">Teclado</div>
+        <div class="opcao" draggable="true">Monitor</div>
+        <div class="opcao" draggable="true">Mouse</div>
+        <div class="opcao" draggable="true">Impressora</div>
+        <div class="opcao" draggable="true">Gabinete</div>
+        <div class="opcao" draggable="true">Placa-mãe</div>
+      </div>
+    </div>
+
+    <button id="btnVerificar">Verificar Respostas</button>
+    <button id="btnReiniciar">Tentar Novamente</button>
+    <button id="btnProxima">Ir para Atividade 6</button>
+    <p id="resultado"></p>
+  </div>
+
+  <script>
+    const aluno = JSON.parse(localStorage.getItem("aluno"));
+    document.getElementById("nomeAluno").textContent = aluno?.nome || "Aluno";
+
+    const opcoes = document.querySelectorAll('.opcao');
+    const dropAreas = document.querySelectorAll('.drop-area');
+
+    opcoes.forEach(opcao => {
+      opcao.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+      });
+    });
+
+    dropAreas.forEach(area => {
+      area.addEventListener('dragover', e => e.preventDefault());
+
+      area.addEventListener('drop', e => {
+        e.preventDefault();
+        const texto = e.dataTransfer.getData('text/plain');
+        area.innerHTML = '';
+        const elem = document.createElement('div');
+        elem.className = 'opcao';
+        elem.textContent = texto;
+        elem.setAttribute('draggable', 'true');
+        elem.addEventListener('dragstart', ev => {
+          ev.dataTransfer.setData('text/plain', ev.target.textContent);
+        });
+        area.appendChild(elem);
+      });
+    });
+
+    const explicacoes = {
+      "Teclado": "O teclado serve para digitar letras, números e comandos no computador.",
+      "Monitor": "O monitor mostra todas as imagens, vídeos e ações realizadas.",
+      "Mouse": "O mouse permite mover o cursor e interagir com os programas.",
+      "Impressora": "A impressora transforma o que está na tela em papel.",
+      "Gabinete": "O gabinete abriga os componentes principais como placa-mãe, HD e memória.",
+      "Placa-mãe": "A placa-mãe conecta todos os componentes, como processador, memória e HD, e permite que eles funcionem juntos."
+    };
+
+    document.getElementById("btnVerificar").addEventListener("click", () => {
+      let acertos = 0;
+      const total = document.querySelectorAll('.grupo').length;
+      const resultado = document.getElementById("resultado");
+      resultado.innerHTML = '';
+
+      document.querySelectorAll('.grupo').forEach(grupo => {
+        const resposta = grupo.dataset.resposta;
+        const dropArea = grupo.querySelector('.drop-area');
+        const respostaUsuario = dropArea.textContent.trim();
+
+        dropArea.classList.remove('correta', 'errada');
+
+        if (respostaUsuario === resposta) {
+          dropArea.classList.add('correta');
+          acertos++;
+        } else {
+          dropArea.classList.add('errada');
+          resultado.innerHTML += `<br>❌ "${respostaUsuario}" está incorreto para "${resposta}".<br><em>${explicacoes[resposta]}</em>`;
+        }
+      });
+
+      const percentual = (acertos / total) * 100;
+      resultado.innerHTML = `<br><strong>Você acertou ${acertos} de ${total} (${percentual.toFixed(0)}%)</strong><br>` + resultado.innerHTML;
+
+      if (percentual >= 70) {
+        resultado.innerHTML += "<br>✅ Muito bem! Você completou a atividade.";
+        document.getElementById("btnReiniciar").style.display = "none";
+        document.getElementById("btnProxima").style.display = "inline-block";
+        localStorage.setItem("atividade6_completou", "sim");
+      } else {
+        resultado.innerHTML += "<br>❌ Tente novamente para alcançar 70% ou mais.";
+        document.getElementById("btnReiniciar").style.display = "inline-block";
+        document.getElementById("btnProxima").style.display = "none";
+      }
+    });
+
+    document.getElementById("btnReiniciar").addEventListener("click", () => {
+      document.querySelectorAll('.drop-area').forEach(area => {
+        area.innerHTML = '';
+        area.classList.remove('correta', 'errada');
+      });
+      document.getElementById("resultado").innerHTML = '';
+      document.getElementById("btnReiniciar").style.display = "none";
+      document.getElementById("btnProxima").style.display = "none";
+    });
+
+    document.getElementById("btnProxima").addEventListener("click", () => {
+      window.location.href = "atividade6.html"; // ajuste conforme o nome real do arquivo da Atividade 6
+    });
+
+    // Embaralhar opções ao carregar
+    function embaralhar(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    const opcoesContainer = document.querySelector('.opcoes');
+    const opcoesArray = Array.from(opcoesContainer.children);
+    embaralhar(opcoesArray);
+    opcoesArray.forEach(el => opcoesContainer.appendChild(el));
+  </script>
+  <footer>
+</html>

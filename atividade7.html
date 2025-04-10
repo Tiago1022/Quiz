@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atividade 7 - Atalhos e Componentes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .pergunta {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 1.1em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+
+    .respostas-box {
+      margin: 20px 0;
+    }
+
+    .resposta-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .resposta-item {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1em;
+      color: #fff;
+      user-select: text;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .resposta-item:hover {
+      transform: scale(1.05);
+      opacity: 0.9;
+    }
+
+    .resposta-item:active {
+      outline: 2px solid #000;
+    }
+
+    .botao {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 1.1em;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .resultado {
+      text-align: center;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    .explicacao {
+      color: #d32f2f;
+      font-size: 1em;
+      margin-top: 10px;
+    }
+
+    #proximaAtividade,
+    #tentarNovamente {
+      display: none;
+    }
+
+    .correta {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Atividade 7 - Copiar e Colar as Respostas</h1>
+
+  <div class="respostas-box">
+    <h3>Respostas para copiar (clique duplo para selecionar):</h3>
+    <div class="resposta-grid" id="respostasContainer"></div>
+  </div>
+
+  <form id="quizForm"></form>
+
+  <div id="resultado" class="resultado"></div>
+  <button id="tentarNovamente" class="botao" onclick="location.reload()">Tentar Novamente</button>
+  <button id="proximaAtividade" class="botao" onclick="window.location.href='atividade8.html'">Ir para Atividade 8</button>
+
+  <script>
+    function copyToClipboard(el) {
+      navigator.clipboard.writeText(el.innerText);
+      el.style.outline = '3px solid yellow';
+      setTimeout(() => el.style.outline = 'none', 1000);
+    }
+
+    const respostas = [
+      { texto: "Ctrl + A", cor: "#f44336" },
+      { texto: "Ctrl + C", cor: "#9c27b0" },
+      { texto: "Ctrl + V", cor: "#3f51b5" },
+      { texto: "Ctrl + Z", cor: "#03a9f4" },
+      { texto: "Hardware", cor: "#009688" },
+      { texto: "Monitor", cor: "#4caf50" },
+      { texto: "Mouse", cor: "#ff9800" },
+      { texto: "Software", cor: "#795548" },
+      { texto: "Teclado", cor: "#607d8b" },
+      { texto: "Navegador", cor: "#e91e63" },
+    ];
+
+    respostas.sort(() => 0.5 - Math.random());
+
+    const respostasContainer = document.getElementById("respostasContainer");
+    respostas.forEach(r => {
+      const div = document.createElement("div");
+      div.className = "resposta-item";
+      div.textContent = r.texto;
+      div.style.backgroundColor = r.cor;
+      div.setAttribute("ondblclick", "copyToClipboard(this)");
+      respostasContainer.appendChild(div);
+    });
+
+    const perguntas = [
+      "Qual equipamento usamos para ver as imagens do computador?",
+      "Qual o atalho usado para colar algo copiado?",
+      "Como chamamos o conjunto de programas do computador?",
+      "Qual o atalho para desfazer uma ação, como apagar algo por engano?",
+      "Qual o atalho usamos para selecionar tudo que está na tela?",
+      "Como se chama a parte física do computador?",
+      "Qual o atalho usado para copiar algo com o teclado?",
+      "Qual equipamento usamos para movimentar o cursor na tela?"
+    ];
+
+    const gabaritoCerto = {
+      "Qual equipamento usamos para ver as imagens do computador?": "Monitor",
+      "Qual o atalho usado para colar algo copiado?": "Ctrl + V",
+      "Como chamamos o conjunto de programas do computador?": "Software",
+      "Qual o atalho para desfazer uma ação, como apagar algo por engano?": "Ctrl + Z",
+      "Qual o atalho usamos para selecionar tudo que está na tela?": "Ctrl + A",
+      "Como se chama a parte física do computador?": "Hardware",
+      "Qual o atalho usado para copiar algo com o teclado?": "Ctrl + C",
+      "Qual equipamento usamos para movimentar o cursor na tela?": "Mouse"
+    };
+
+    const explicacoes = {
+      "Ctrl + A": "Seleciona tudo que está na tela (texto, arquivos, etc).",
+      "Ctrl + C": "Serve para copiar um texto, imagem ou arquivo.",
+      "Ctrl + V": "Serve para colar algo que foi copiado.",
+      "Ctrl + Z": "Desfaz a última ação, como apagar algo por engano.",
+      "Hardware": "Parte física do computador, como mouse, teclado e monitor.",
+      "Software": "Conjunto de programas que usamos no computador.",
+      "Monitor": "Equipamento que exibe as imagens do computador.",
+      "Mouse": "Equipamento usado para mover o cursor na tela e clicar.",
+      "Teclado": "Equipamento usado para digitar letras, números e símbolos.",
+      "Navegador": "Programa usado para acessar a internet, como Chrome ou Firefox."
+    };
+
+    perguntas.sort(() => 0.5 - Math.random());
+    const quizForm = document.getElementById("quizForm");
+    perguntas.forEach((p, i) => {
+      const div = document.createElement("div");
+      div.className = "pergunta";
+      div.innerHTML = `${i + 1}. ${p}<br><input type="text" name="q${i + 1}" data-pergunta="${p}">`;
+      quizForm.appendChild(div);
+    });
+
+    const botao = document.createElement("button");
+    botao.type = "submit";
+    botao.className = "botao";
+    botao.textContent = "Verificar Respostas";
+    quizForm.appendChild(botao);
+
+    quizForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const campos = this.querySelectorAll("input[type='text']");
+      let acertos = 0;
+      let resultado = "";
+
+      campos.forEach((campo, idx) => {
+        const pergunta = campo.dataset.pergunta;
+        const respostaCerta = gabaritoCerto[pergunta];
+        const respostaDada = campo.value.trim();
+
+        if (respostaDada.toLowerCase() === respostaCerta.toLowerCase()) {
+          acertos++;
+          resultado += `<div class='correta'>Pergunta ${idx + 1}: Correta!</div>`;
+        } else {
+          resultado += `<div class='explicacao'>"${respostaDada}" está incorreto para a pergunta ${idx + 1}. ${explicacoes[respostaCerta]}</div>`;
+        }
+      });
+
+      const percentual = (acertos / perguntas.length) * 100;
+      resultado = `<p>Você acertou ${acertos} de ${perguntas.length} perguntas. (${percentual.toFixed(0)}%)</p>` + resultado;
+      document.getElementById("resultado").innerHTML = resultado;
+      document.getElementById("quizForm").style.display = "none";
+
+      if (percentual >= 70) {
+        document.getElementById("proximaAtividade").style.display = "block";
+      } else {
+        document.getElementById("tentarNovamente").style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Conclusão do Curso</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #d1f2eb, #fef9e7);
+      text-align: center;
+      padding: 50px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      color: #27ae60;
+    }
+
+    .mensagem {
+      font-size: 22px;
+      margin-top: 30px;
+    }
+
+    .desempenho {
+      font-size: 20px;
+      margin: 20px 0;
+      color: #2980b9;
+    }
+
+    .botao-voltar {
+      margin-top: 30px;
+      background-color: #2980b9;
+      color: white;
+      padding: 12px 25px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .botao-voltar:hover {
+      background-color: #1f6391;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Parabéns, <span id="nomeAluno">Aluno</span>! 🎉</h1>
+    <p class="desempenho">Você concluiu todas as atividades parabéns por seu aproveitamento!</p>
+    <p class="mensagem">Você mostrou foco, resistência e dedicação. Continue praticando e aprendendo!</p>
+
+    <button class="botao-voltar" onclick="window.location.href='index.html'">Voltar ao Início</button>
+  </div>
+
+  <script>
+    const aluno = JSON.parse(localStorage.getItem("aluno")) || { nome: "Aluno", desempenho: 0 };
+    document.getElementById("nomeAluno").textContent = aluno.nome;
+    document.getElementById("porcentagem").textContent = aluno.desempenho + "%";
+  </script>
+</body>
+</html>

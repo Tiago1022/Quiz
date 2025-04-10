@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Atividade 10 - Resistência e Foco</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #e1f5fe, #fff);
+      text-align: center;
+      padding: 30px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h2 {
+      color: #0277bd;
+    }
+    .pergunta {
+      font-size: 20px;
+      margin: 20px 0;
+    }
+    .resposta-input {
+      padding: 10px;
+      font-size: 18px;
+      width: 80%;
+      max-width: 400px;
+    }
+    button {
+      padding: 12px 24px;
+      margin-top: 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #00796b;
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+    #resultado, #pontuacao, #cronometro {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    #cronometro {
+      font-size: 24px;
+      color: red;
+    }
+    .bomba {
+      font-size: 50px;
+      color: red;
+      display: none;
+      margin-top: 30px;
+    }
+    #btnFinalizar {
+      display: none;
+      background-color: #1e88e5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Atividade 10 - Resistência e Foco 💥</h2>
+    <p>Olá <span id="nomeAluno"></span>! Responda o mais rápido possível antes que o tempo acabe.</p>
+
+    <div id="cronometro">⏱ Tempo restante: <span id="tempo">30</span>s</div>
+
+    <div class="pergunta" id="pergunta"></div>
+    <input type="text" class="resposta-input" id="resposta" placeholder="Digite sua resposta aqui">
+    <br>
+    <button onclick="responder()">Responder</button>
+
+    <div id="resultado"></div>
+    <div id="pontuacao"></div>
+    <div class="bomba" id="bomba">💣💥 BUM! Tempo esgotado!</div>
+
+    <button id="btnFinalizar" onclick="irParaFinal()">Finalizar</button>
+  </div>
+
+  <script>
+    const aluno = JSON.parse(localStorage.getItem("aluno")) || { nome: "Aluno" };
+    document.getElementById("nomeAluno").textContent = aluno.nome;
+
+    const perguntas = [
+      { texto: "Qual componente é responsável por armazenar dados permanentemente?", resposta: "HD" },
+      { texto: "Qual parte do computador executa os cálculos e processa informações?", resposta: "CPU" },
+      { texto: "Qual componente conecta todas as outras peças do computador?", resposta: "placa mãe" },
+      { texto: "Que memória ajuda o computador a funcionar mais rápido?", resposta: "memória RAM" },
+      { texto: "Qual dispositivo usamos para mover o cursor na tela?", resposta: "mouse" },
+      { texto: "O que usamos para digitar textos no computador?", resposta: "teclado" },
+      { texto: "Qual é o nome do programa que permite navegar na internet?", resposta: "navegador" },
+      { texto: "Como se chama a tela usada no computador?", resposta: "monitor" },
+      { texto: "Qual dispositivo imprime documentos?", resposta: "impressora" },
+      { texto: "Onde conectamos o pendrive?", resposta: "porta USB" }
+    ];
+
+    let perguntasEmbaralhadas = perguntas.sort(() => 0.5 - Math.random());
+    let indice = 0;
+    let acertos = 0;
+    let tempoRestante = 30;
+    let cronometro;
+
+    function iniciarCronometro() {
+      tempoRestante = 30;
+      document.getElementById("tempo").textContent = tempoRestante;
+      cronometro = setInterval(() => {
+        tempoRestante--;
+        document.getElementById("tempo").textContent = tempoRestante;
+        if (tempoRestante <= 0) {
+          clearInterval(cronometro);
+          explodirBomba();
+        }
+      }, 1000);
+    }
+
+    function explodirBomba() {
+      document.getElementById("bomba").style.display = "block";
+      document.getElementById("resultado").textContent = "⏰ Você perdeu esta rodada!";
+      setTimeout(proximaPergunta, 3000);
+    }
+
+    function mostrarPergunta() {
+      if (indice < perguntasEmbaralhadas.length) {
+        document.getElementById("pergunta").textContent = perguntasEmbaralhadas[indice].texto;
+        document.getElementById("resposta").value = "";
+        document.getElementById("resultado").textContent = "";
+        document.getElementById("bomba").style.display = "none";
+        iniciarCronometro();
+      } else {
+        finalizarJogo();
+      }
+    }
+
+    function responder() {
+      clearInterval(cronometro);
+      const respostaUsuario = document.getElementById("resposta").value.trim().toLowerCase();
+      const respostaCorreta = perguntasEmbaralhadas[indice].resposta.toLowerCase();
+      if (respostaUsuario === respostaCorreta) {
+        document.getElementById("resultado").textContent = "✅ Resposta correta!";
+        acertos++;
+      } else {
+        document.getElementById("resultado").textContent = `❌ Errado! A resposta certa era: ${perguntasEmbaralhadas[indice].resposta}`;
+      }
+      setTimeout(proximaPergunta, 2000);
+    }
+
+    function proximaPergunta() {
+      indice++;
+      mostrarPergunta();
+    }
+
+    function finalizarJogo() {
+      const total = perguntasEmbaralhadas.length;
+      const percentual = Math.round((acertos / total) * 100);
+      document.getElementById("pergunta").textContent = "🎉 Fim da atividade!";
+      document.getElementById("pontuacao").innerHTML = `<br><strong>Você acertou ${acertos} de ${total} (${percentual}%)</strong>`;
+      document.getElementById("btnFinalizar").style.display = "inline-block";
+      aluno.desempenho = percentual;
+      localStorage.setItem("aluno", JSON.stringify(aluno));
+    }
+
+    function irParaFinal() {
+      window.location.href = "final.html";
+    }
+
+    mostrarPergunta();
+  </script>
+</body>
+</html>

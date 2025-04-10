@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade 6 - Arraste e Solte</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffe082, #ffccbc);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h2 {
+      color: #e65100;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .area-principal {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .perguntas, .opcoes {
+      flex: 1;
+      min-width: 300px;
+    }
+    .grupo {
+      margin-bottom: 20px;
+    }
+    .grupo strong {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .drop-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+      min-height: 60px;
+      background-color: #fff3e0;
+      border: 2px dashed #fb8c00;
+      border-radius: 8px;
+    }
+    .opcoes {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .opcao {
+      padding: 8px 12px;
+      background: linear-gradient(to right, #ef6c00, #e65100);
+      color: white;
+      border-radius: 6px;
+      cursor: grab;
+      width: fit-content;
+    }
+    #resultado {
+      margin-top: 30px;
+      font-size: 18px;
+      font-weight: 600;
+      background-color: #fffde7;
+      border-left: 4px solid #fbc02d;
+      padding: 10px;
+      border-radius: 8px;
+    }
+    #btnVerificar, #btnReiniciar, #btnProxima {
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      background: linear-gradient(to right, #fb8c00, #f57c00);
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #btnReiniciar {
+      display: none;
+      background: linear-gradient(to right, #b71c1c, #e53935);
+    }
+    #btnProxima {
+      display: none;
+      background: linear-gradient(to right, #2e7d32, #388e3c);
+    }
+    .correta {
+      background-color: #aed581 !important;
+    }
+    .errada {
+      background-color: #ef9a9a !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Atividade 6 - Arraste e Solte 🚀</h2>
+    <p>Olá <span id="nomeAluno"></span>! Relacione corretamente os termos com suas definições mais avançadas.</p>
+
+    <div class="area-principal">
+      <div class="perguntas">
+        <div class="grupo" data-resposta="Processador">
+          <strong>Responsável por executar instruções e processar dados.</strong>
+          <div class="drop-area"></div>
+        </div>
+        <div class="grupo" data-resposta="Sistema Operacional">
+          <strong>Software que gerencia o hardware e permite a interação com o computador.</strong>
+          <div class="drop-area"></div>
+        </div>
+        <div class="grupo" data-resposta="Memória RAM">
+          <strong>Armazena temporariamente dados e programas em uso.</strong>
+          <div class="drop-area"></div>
+        </div>
+        <div class="grupo" data-resposta="HD">
+          <strong>Dispositivo que armazena dados permanentemente.</strong>
+          <div class="drop-area"></div>
+        </div>
+      </div>
+
+      <div class="opcoes">
+        <div class="opcao" draggable="true">Memória RAM</div>
+        <div class="opcao" draggable="true">HD</div>
+        <div class="opcao" draggable="true">Processador</div>
+        <div class="opcao" draggable="true">Sistema Operacional</div>
+      </div>
+    </div>
+
+    <button id="btnVerificar">Verificar Respostas</button>
+    <button id="btnReiniciar">Tentar Novamente</button>
+    <button id="btnProxima" onclick="window.location.href='atividade8.html'">Próxima Atividade</button>
+    <p id="resultado"></p>
+  </div>
+
+  <script>
+    const aluno = JSON.parse(localStorage.getItem("aluno"));
+    document.getElementById("nomeAluno").textContent = aluno?.nome || "Aluno";
+
+    const opcoes = document.querySelectorAll('.opcao');
+    const dropAreas = document.querySelectorAll('.drop-area');
+
+    opcoes.forEach(opcao => {
+      opcao.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+      });
+    });
+
+    dropAreas.forEach(area => {
+      area.addEventListener('dragover', e => e.preventDefault());
+      area.addEventListener('drop', e => {
+        e.preventDefault();
+        const texto = e.dataTransfer.getData('text/plain');
+        area.innerHTML = '';
+        const elem = document.createElement('div');
+        elem.className = 'opcao';
+        elem.textContent = texto;
+        elem.setAttribute('draggable', 'true');
+        elem.addEventListener('dragstart', ev => {
+          ev.dataTransfer.setData('text/plain', ev.target.textContent);
+        });
+        area.appendChild(elem);
+      });
+    });
+
+    const explicacoes = {
+      "Processador": "O processador é o cérebro do computador, responsável por interpretar e executar comandos.",
+      "Sistema Operacional": "O sistema operacional conecta o hardware ao usuário e executa programas.",
+      "Memória RAM": "A RAM guarda dados temporários para acesso rápido, mas se apaga ao desligar.",
+      "HD": "O HD mantém os dados salvos mesmo com o computador desligado."
+    };
+
+    document.getElementById("btnVerificar").addEventListener("click", () => {
+      let acertos = 0;
+      const total = document.querySelectorAll('.grupo').length;
+      const resultado = document.getElementById("resultado");
+      resultado.innerHTML = '';
+
+      document.querySelectorAll('.grupo').forEach(grupo => {
+        const resposta = grupo.dataset.resposta;
+        const dropArea = grupo.querySelector('.drop-area');
+        const respostaUsuario = dropArea.textContent.trim();
+
+        dropArea.classList.remove('correta', 'errada');
+
+        if (respostaUsuario === resposta) {
+          dropArea.classList.add('correta');
+          acertos++;
+        } else {
+          dropArea.classList.add('errada');
+          resultado.innerHTML += `<br>❌ "${respostaUsuario}" está incorreto para "${resposta}".<br><em>${explicacoes[resposta]}</em>`;
+        }
+      });
+
+      const percentual = (acertos / total) * 100;
+      resultado.innerHTML = `<br><strong>Você acertou ${acertos} de ${total} (${percentual.toFixed(0)}%)</strong><br>` + resultado.innerHTML;
+
+      if (percentual >= 70) {
+        resultado.innerHTML += "<br>✅ Excelente! Você pode seguir para a próxima atividade.";
+        document.getElementById("btnReiniciar").style.display = "none";
+        document.getElementById("btnProxima").style.display = "inline-block";
+        localStorage.setItem("atividade7_completou", "sim");
+      } else {
+        resultado.innerHTML += "<br>❌ Você precisa de pelo menos 70% para avançar. Tente novamente.";
+        document.getElementById("btnReiniciar").style.display = "inline-block";
+        document.getElementById("btnProxima").style.display = "none";
+      }
+    });
+
+    document.getElementById("btnReiniciar").addEventListener("click", () => {
+      document.querySelectorAll('.drop-area').forEach(area => {
+        area.innerHTML = '';
+        area.classList.remove('correta', 'errada');
+      });
+      document.getElementById("resultado").innerHTML = '';
+      document.getElementById("btnReiniciar").style.display = "none";
+      document.getElementById("btnProxima").style.display = "none";
+    });
+  </script>
+</body>
+</html>

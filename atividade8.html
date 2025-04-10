@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade 8 - Arraste e Solte com Imagens</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #e3f2fd, #fff);
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      color: #1565c0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .imagens {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .img-item {
+      border: 2px dashed #90caf9;
+      border-radius: 10px;
+      padding: 10px;
+      width: 180px;
+      text-align: center;
+      background-color: #e3f2fd;
+    }
+    .img-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+    }
+    .drop-area {
+      min-height: 40px;
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #fff;
+      border-radius: 5px;
+    }
+    .opcoes {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .opcao {
+      background-color: #42a5f5;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: grab;
+    }
+    .correta {
+      background-color: #c8e6c9 !important;
+    }
+    .errada {
+      background-color: #ffcdd2 !important;
+    }
+    #resultado {
+      margin-top: 20px;
+    }
+    #btnVerificar, #btnReiniciar, #btnProxima {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #btnVerificar {
+      background-color: #1565c0;
+      color: #fff;
+    }
+    #btnReiniciar {
+      background-color: #d32f2f;
+      color: #fff;
+      display: none;
+    }
+    #btnProxima {
+      background-color: #2e7d32;
+      color: #fff;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Atividade 8 - Arraste o nome para a imagem correta 🖼️</h2>
+    <p>Olá <span id="nomeAluno"></span>! Identifique corretamente as peças do computador arrastando os nomes até a imagem correspondente.</p>
+
+    <div class="imagens">
+      <div class="img-item" data-resposta="Mouse">
+        <img src="img/mouse.png" alt="Mouse">
+        <div class="drop-area"></div>
+      </div>
+      <div class="img-item" data-resposta="Teclado">
+        <img src="img/teclado.png" alt="Teclado">
+        <div class="drop-area"></div>
+      </div>
+      <div class="img-item" data-resposta="Monitor">
+        <img src="img/monitor.png" alt="Monitor">
+        <div class="drop-area"></div>
+      </div>
+      <div class="img-item" data-resposta="Placa mãe">
+        <img src="img/placa-mae.png" alt="Placa mãe">
+        <div class="drop-area"></div>
+      </div>
+      <div class="img-item" data-resposta="HD">
+        <img src="img/hd.png" alt="HD">
+        <div class="drop-area"></div>
+      </div>
+      <div class="img-item" data-resposta="CPU">
+        <img src="img/cpu.png" alt="CPU">
+        <div class="drop-area"></div>
+      </div>
+      <div class="img-item" data-resposta="Memória RAM">
+        <img src="img/memoria-ram.png" alt="Memória RAM">
+        <div class="drop-area"></div>
+      </div>
+    </div>
+
+    <div class="opcoes">
+      <div class="opcao" draggable="true">Mouse</div>
+      <div class="opcao" draggable="true">Teclado</div>
+      <div class="opcao" draggable="true">Monitor</div>
+      <div class="opcao" draggable="true">HD</div>
+      <div class="opcao" draggable="true">Placa mãe</div>
+      <div class="opcao" draggable="true">CPU</div>
+      <div class="opcao" draggable="true">Memória RAM</div>
+    </div>
+
+    <button id="btnVerificar">Verificar Respostas</button>
+    <button id="btnReiniciar">Tentar Novamente</button>
+    <button id="btnProxima" onclick="window.location.href='atividade9.html'">Próxima Atividade</button>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    const aluno = JSON.parse(localStorage.getItem("aluno"));
+    document.getElementById("nomeAluno").textContent = aluno?.nome || "Aluno";
+
+    const opcoes = document.querySelectorAll('.opcao');
+    const dropAreas = document.querySelectorAll('.drop-area');
+
+    opcoes.forEach(opcao => {
+      opcao.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.textContent);
+      });
+    });
+
+    dropAreas.forEach(area => {
+      area.addEventListener('dragover', e => e.preventDefault());
+      area.addEventListener('drop', e => {
+        e.preventDefault();
+        const texto = e.dataTransfer.getData('text/plain');
+        const elem = Array.from(opcoes).find(op => op.textContent === texto);
+        if (elem) {
+          const previous = area.querySelector('.opcao');
+          if (previous) {
+            const original = Array.from(opcoes).find(op => op.textContent === previous.textContent);
+            if (original) {
+              original.style.display = 'block';
+              original.classList.remove('usada');
+            }
+          }
+          area.innerHTML = '';
+          const novoElem = elem.cloneNode(true);
+          novoElem.classList.add('usada');
+          area.appendChild(novoElem);
+          elem.style.display = 'none';
+        }
+      });
+    });
+
+    document.getElementById("btnVerificar").addEventListener("click", () => {
+      let acertos = 0;
+      const total = document.querySelectorAll('.img-item').length;
+      const resultado = document.getElementById("resultado");
+      resultado.innerHTML = '';
+
+      document.querySelectorAll('.img-item').forEach(item => {
+        const resposta = item.dataset.resposta;
+        const dropArea = item.querySelector('.drop-area');
+        const respostaUsuario = dropArea.textContent.trim();
+
+        dropArea.classList.remove('correta', 'errada');
+
+        if (respostaUsuario === resposta) {
+          dropArea.classList.add('correta');
+          acertos++;
+        } else {
+          dropArea.classList.add('errada');
+          resultado.innerHTML += `❌ "${respostaUsuario || 'vazio'}" está incorreto para a imagem de "${resposta}".<br>`;
+        }
+      });
+
+      const percentual = (acertos / total) * 100;
+      resultado.innerHTML = `<br><strong>Você acertou ${acertos} de ${total} (${percentual.toFixed(0)}%)</strong><br>` + resultado.innerHTML;
+
+      if (percentual >= 70) {
+        resultado.innerHTML += "<br>✅ Muito bem! Você pode ir para a próxima atividade.";
+        document.getElementById("btnProxima").style.display = "inline-block";
+        document.getElementById("btnReiniciar").style.display = "none";
+      } else {
+        resultado.innerHTML += "<br>❌ Você precisa de pelo menos 70% para avançar. Tente novamente.";
+        document.getElementById("btnProxima").style.display = "none";
+        document.getElementById("btnReiniciar").style.display = "inline-block";
+      }
+    });
+
+    document.getElementById("btnReiniciar").addEventListener("click", () => {
+      document.querySelectorAll('.drop-area').forEach(area => {
+        area.innerHTML = '';
+        area.classList.remove('correta', 'errada');
+      });
+      document.querySelectorAll('.opcao').forEach(op => {
+        op.style.display = 'block';
+        op.classList.remove('usada');
+      });
+      document.getElementById("resultado").innerHTML = '';
+      document.getElementById("btnReiniciar").style.display = "none";
+      document.getElementById("btnProxima").style.display = "none";
+    });
+  </script>
+</body>
+</html>
